@@ -2,6 +2,8 @@
 
 ---
 
+> Attention, you should copy all the source data into this project folder before running the code. As the data itself is confidential, it is not included in the repository.
+
 ## Project Description
 
 This is a group engineering project (projet d'ingénierie en équipe, PIE) of ENSTA 2024. This project focuses on applying supervised learning techniques to evaluate the similarity of microelectronic components based on their characteristics. The goal is to develop a system that compares two components and provides a similarity score. The project will start with basic machine learning models like regression and decision trees, progressing to neural networks and semi-supervised methods. An important aspect is fine-tuning the models on new datasets, with input from engineers at STMicroelectronics.
@@ -109,16 +111,16 @@ We use the `MAJOR.MINOR.PATCH` paradigm to control the development of the projec
 - **Philippe Rochette** - Project Supervisor
 
 - **WANG Yuran** - Project Manager
-- **AROUS Mohamed Amine**
-- **BASTIANELLO LIMA Gabriel**
-- **BEN ARBIA Imene**
-- **EZZINA Mohamed Naceur**
-- **GASSEM Adam**
-- **GHNIMI Mohamed Neji**
-- **GHOZZI Seifeddine**
-- **HIDOURI Ameni**
-- **HUANG Lingyun**
-- **LÓPEZ NIETO Nicolás**
-- **YANG Shuya**
+- **AROUS Mohamed Amine** - Study on Algorithm
+- **BASTIANELLO LIMA Gabriel** - Study on Data
+- **BEN ARBIA Imene** - Study on Data
+- **EZZINA Mohamed Naceur** - Study on Algorithm
+- **GASSEM Adam** - Study on Algorithm
+- **GHNIMI Mohamed Neji** - Study on Data
+- **GHOZZI Seifeddine** - Study on Algorithm
+- **HIDOURI Ameni** - Study on Data
+- **HUANG Lingyun** - Study on Algorithm
+- **LÓPEZ NIETO Nicolás** - Study on Data
+- **YANG Shuya** - Study on Algorithm
 
 For any questions or clarifications, please contact **anthony.aoun@st.com** or **philippe.rochette@st.com**.
