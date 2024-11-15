@@ -6,3 +6,4 @@ insights
 progress.md
 run-accuracy.py
 Notes*
+__pycache__/^test_opamps_scores.cpython-310.pyc
