@@ -2,8 +2,6 @@
 import pandas as pd
 import os
 from scipy.stats import norm
-    
-home = os.path.abspath(os.getcwd())
 
 def get_params(category):
     base_means = {
@@ -27,8 +25,8 @@ def get_params(category):
     return mean, std
 
 def preprocess(file_1, file_2, output_file, with_gower = False):
-    df1 = pd.read_csv(file_1)
-    df2 = pd.read_csv(file_2)
+    df1 = pd.read_csv(file_1) # features
+    df2 = pd.read_csv(file_2) # xref
 
     df_stm = df2.merge(df1, left_on='STMicro MPN', right_on='MPN', suffixes=('_ref', '_stm'))
     df_merged = df_stm.merge(df1, left_on='Competitor MPN', right_on='MPN', suffixes=('', '_comp'))
@@ -39,7 +37,7 @@ def preprocess(file_1, file_2, output_file, with_gower = False):
     class_A = df_filtered[df_filtered["Cross Reference Type"] == "A"]
     class_B = df_filtered[df_filtered["Cross Reference Type"].isin(["B","B/Upgrade","B/Downgrade"])]
     class_C = df_filtered[df_filtered["Cross Reference Type"].isin(["C","C/Upgrade","C/Downgrade"])]
-    n=20000
+    n = 20000
     random_state = 42
     class_B_downsampled = class_B.sample(n=n, random_state=random_state)
     class_C_downsampled = class_C.sample(n=n,random_state=random_state)
@@ -82,7 +80,15 @@ def preprocess(file_1, file_2, output_file, with_gower = False):
     df_sampled.to_csv(output_file, index=False)
     print(f"Combined table saved to {output_file}")
 
-file1 = f'{home}\encoded data\opamps-features.csv'
-file2 = f'{home}\encoded data\opamps-xref.csv'
-output = f'{home}\encoded data\output-data.csv'
-preprocess(file1, file2, output, with_gower=False)
+def run():
+    current_file_path = os.path.abspath(__file__)
+    current_dir = os.path.dirname(current_file_path)
+    home = os.path.dirname(current_dir)
+
+    file1 = f'{home}\encoded data\opamps-features.csv'
+    file2 = f'{home}\encoded data\opamps-xref-cleaned.csv'
+    output = f'{home}\encoded data\input-data.csv'
+    preprocess(file1, file2, output)
+
+if __name__ == "__main__":
+    run()
