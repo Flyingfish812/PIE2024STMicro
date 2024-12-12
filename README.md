@@ -112,7 +112,7 @@ We use the `MAJOR.MINOR.PATCH` paradigm to control the development of the projec
 
 - **WANG Yuran** - Project Manager
 - **AROUS Mohamed Amine** - Study on Algorithm
-- **BASTIANELLO LIMA Gabriel** - Study on Data
+- ~~BASTIANELLO LIMA Gabriel - Study on Data~~
 - **BEN ARBIA Imene** - Study on Data
 - **EZZINA Mohamed Naceur** - Study on Algorithm
 - **GASSEM Adam** - Study on Algorithm

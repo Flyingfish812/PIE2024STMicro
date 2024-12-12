@@ -1,11 +1,10 @@
+__pycache__
 *.pkl
 *.csv
 *.npy
 references/2_Presentation_sujet_XRef.pdf
 insights
-progress.md
 run-accuracy.py
-Notes*
 __pycache__/^test_opamps_scores.cpython-310.pyc
 /env
 notebook/RandomForest_model.joblib
