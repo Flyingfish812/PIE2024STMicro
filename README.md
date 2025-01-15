@@ -110,17 +110,16 @@ We use the `MAJOR.MINOR.PATCH` paradigm to control the development of the projec
 - **Anthony Aoun** - Project Supervisor
 - **Philippe Rochette** - Project Supervisor
 
-- **WANG Yuran** - Project Manager
-- **AROUS Mohamed Amine** - Study on Algorithm
-- ~~BASTIANELLO LIMA Gabriel - Study on Data~~
+- **WANG Yuran** - Project Manager, Coordinateur de Projet
+- **AROUS Mohamed Amine** - Study on Algorithm, Chargé de Communication
 - **BEN ARBIA Imene** - Study on Data
-- **EZZINA Mohamed Naceur** - Study on Algorithm
-- **GASSEM Adam** - Study on Algorithm
-- **GHNIMI Mohamed Neji** - Study on Data
+- **EZZINA Mohamed Naceur** - Study on Algorithm, Gestionnaire de budget
+- **GASSEM Adam** - Study on Algorithm, Responsable Technique Algorithmes
+- **GHNIMI Mohamed Neji** - Study on Data, Responsable Technique Données
 - **GHOZZI Seifeddine** - Study on Algorithm
-- **HIDOURI Ameni** - Study on Data
-- **HUANG Lingyun** - Study on Algorithm
+- **HIDOURI Ameni** - Study on Data, Gestionnaire des Risques
+- **HUANG Lingyun** - Study on Algorithm, Contrôleur de Qualité
 - **LÓPEZ NIETO Nicolás** - Study on Data
-- **YANG Shuya** - Study on Algorithm
+- **YANG Shuya** - Study on Algorithm, Responsable de planification
 
 For any questions or clarifications, please contact **anthony.aoun@st.com** or **philippe.rochette@st.com**.
