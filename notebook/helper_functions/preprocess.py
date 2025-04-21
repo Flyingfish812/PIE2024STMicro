@@ -2,6 +2,8 @@ from sklearn.preprocessing import MinMaxScaler ,  StandardScaler, OneHotEncoder
 import pandas as pd
 from scipy.stats import norm
 from sklearn.model_selection import train_test_split
+import numpy as np
+
 
 def scale(df,columns, Scaler=None):
   """Normalize the columns of df"""
@@ -38,6 +40,107 @@ def merge_datasets(df_feat,df_ref):
   df_filtered = df_merged[~df_merged["Cross Reference Type"].isin(["SF"])] 
 
   return df_filtered
+
+def generate_y_abs(df, base_means, spread,categorical_columns ,numerical_columns ):
+  rem = ["distance_"+col for col in categorical_columns] + ["distance_"+col for col in numerical_columns ]
+  
+  for col in categorical_columns:
+    df["distance_"+col] = df[col] == df[col+"_comp"]
+    df["distance_"+col] =(1- df["distance_"+col].astype(int))
+  for col in numerical_columns:
+    df["distance_"+col] = np.abs(df[col] - df[col+"_comp"])
+  df["distance"] = df[["distance_"+col for col in categorical_columns+numerical_columns]].sum(axis=1)
+  df["distance"] = df["distance"]/(len(rem)*0.5)
+  df["Closeness"] = df["Cross Reference Type"].map(base_means)
+  df["Closeness"] -= (df["distance"]*spread)
+  epsilon_A = np.random.normal(0, 0.005, size=len(df[(df["Cross Reference Type"] == "A") & (df["distance"] ==0 )]),)
+  df.loc[(df["Cross Reference Type"] == "A") & (df["distance"] == 0), "Closeness"] += epsilon_A
+  
+  # Ensure Closeness remains within [0,1]
+  df["Closeness"] = df["Closeness"].clip(0, 1)
+  return df.drop(columns=rem + ["distance"])
+
+
+def generate_y_pow(df, base_intervals,categorical_columns ,numerical_columns, p=2):
+  rem = ["distance_"+col for col in categorical_columns] + ["distance_"+col for col in numerical_columns ]
+  for col in categorical_columns:
+    df["distance_"+col] = df[col] == df[col+"_comp"]
+    df["distance_"+col] =1- df["distance_"+col].astype(int)
+  for col in numerical_columns:
+    df["distance_"+col] = np.abs(df[col] - df[col+"_comp"])
+  df["distance"] = df[["distance_"+col for col in categorical_columns+numerical_columns]].sum(axis=1)
+  mask_A_zero = (df["Cross Reference Type"] == "A") & (df["distance"] ==0 )
+  epsilon_A = np.random.normal(0, 0.005, size=len(df[mask_A_zero]))
+  df["distance"] = df["distance"].apply(lambda x: x**p)
+  df["distance"] = df["distance"]/max(df["distance"])
+  df["similarity"] = 1- df["distance"]
+  intervals_df = pd.DataFrame.from_dict(base_intervals, orient='index', columns=['lower_bound', 'upper_bound'])
+  intervals_df.index.name = 'Cross Reference Type'
+  intervals_df.reset_index(inplace=True)
+  df = df.merge(intervals_df, on="Cross Reference Type", how="left")
+  
+  df["Closeness"] = df["lower_bound"] + (df["upper_bound"] -df["lower_bound"]) * df["similarity"]
+  print(f"epsilon_A shape: {epsilon_A.shape}")
+
+  df.loc[mask_A_zero.values, "Closeness"] += epsilon_A
+  
+  # Ensure Closeness remains within [0,1]
+  df["Closeness"] = df["Closeness"].clip(0, 1)
+  return df.drop(columns=rem + ["distance", "lower_bound","upper_bound","similarity"])
+
+def generate_y_sigma(df, base_intervals,categorical_columns ,numerical_columns, k=5.5, midpoint=0.5):
+  rem = ["distance_"+col for col in categorical_columns] + ["distance_"+col for col in numerical_columns ]
+  for col in categorical_columns:
+    df["distance_"+col] = df[col] == df[col+"_comp"]
+    df["distance_"+col] =1- df["distance_"+col].astype(int)
+  for col in numerical_columns:
+    df["distance_"+col] = np.abs(df[col] - df[col+"_comp"])
+  df["distance"] = df[["distance_"+col for col in categorical_columns+numerical_columns]].sum(axis=1)
+  mask_A_zero = (df["Cross Reference Type"] == "A") & (df["distance"] ==0 )
+  epsilon_A = np.random.normal(0, 0.005, size=len(df[mask_A_zero]))
+  df["distance"] = df["distance"].apply(lambda x: 1/(1+np.exp(-k*(x-midpoint))))
+  df["distance"] = df["distance"]/max(df["distance"])
+  df["similarity"] = 1- df["distance"]
+  intervals_df = pd.DataFrame.from_dict(base_intervals, orient='index', columns=['lower_bound', 'upper_bound'])
+  intervals_df.index.name = 'Cross Reference Type'
+  intervals_df.reset_index(inplace=True)
+  df = df.merge(intervals_df, on="Cross Reference Type", how="left")
+  
+  df["Closeness"] = df["lower_bound"] + (df["upper_bound"] -df["lower_bound"]) * df["similarity"]
+  
+  
+  df.loc[mask_A_zero.values, "Closeness"] += epsilon_A
+  
+  # Ensure Closeness remains within [0,1]
+  df["Closeness"] = df["Closeness"].clip(0, 1)
+  return df.drop(columns=rem + ["distance", "lower_bound","upper_bound","similarity"])
+
+def generate_y_exp(df, base_intervals,categorical_columns ,numerical_columns, k=2.5):
+  rem = ["distance_"+col for col in categorical_columns] + ["distance_"+col for col in numerical_columns ]
+  for col in categorical_columns:
+    df["distance_"+col] = df[col] == df[col+"_comp"]
+    df["distance_"+col] = 1- df["distance_"+col].astype(int)
+  for col in numerical_columns:
+    df["distance_"+col] = np.abs(df[col] - df[col+"_comp"])
+  df["distance"] = df[["distance_"+col for col in categorical_columns+numerical_columns]].sum(axis=1)
+  mask_A_zero = (df["Cross Reference Type"] == "A") & (df["distance"] ==0 )
+  epsilon_A = np.random.normal(0, 0.005, size=len(df[mask_A_zero]))
+  df["distance"] = df["distance"].apply(lambda x: np.exp(k*x)-1 )
+  df["distance"] = df["distance"]/max(df["distance"])
+  df["similarity"] = 1- df["distance"]
+  intervals_df = pd.DataFrame.from_dict(base_intervals, orient='index', columns=['lower_bound', 'upper_bound'])
+  intervals_df.index.name = 'Cross Reference Type'
+  intervals_df.reset_index(inplace=True)
+  df = df.merge(intervals_df, on="Cross Reference Type", how="left")
+  
+  df["Closeness"] = df["lower_bound"] + (df["upper_bound"] -df["lower_bound"]) * df["similarity"]
+  
+  
+  df.loc[mask_A_zero.values, "Closeness"] += epsilon_A
+  
+  # Ensure Closeness remains within [0,1]
+  df["Closeness"] = df["Closeness"].clip(0, 1)
+  return df.drop(columns=rem + ["distance", "lower_bound","upper_bound","similarity"])
 
 
 def generate_closeness(df, means, stds, distribution=norm, n_std=2, **dist_kwargs):
@@ -77,7 +180,7 @@ def generate_closeness(df, means, stds, distribution=norm, n_std=2, **dist_kwarg
   df['Closeness'] = df['Closeness'].clip(lower=df['lower'], upper=df['upper'])
   
   # Remove temporary columns
-  df.drop(columns=['lower', 'upper'], inplace=True)
+  df.drop(columns=['lower', 'upper',"Mean","Std"], inplace=True)
   
   return df
 
